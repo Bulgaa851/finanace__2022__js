@@ -14,11 +14,37 @@ var uiController = (function () {
     leftIncome_: ".budget__value",
     containerDiv: ".container",
     itemPersentage: ".item__percentage",
+    dateLabel: ".budget__title--month",
   };
   var nodeListForEach = function (list, callback) {
     for (var i = 0; i < list.length; i++) {
       callback(list[i], i);
     }
+  };
+  var formatMoney = function (too, type) {
+    too = "" + too;
+    var x = too.split("").reverse().join("");
+
+    var y = "";
+    var count = 1;
+
+    for (var i = 0; i < x.length; i++) {
+      y = y + x[i];
+
+      if (count % 3 === 0) y = y + ",";
+      count++;
+    }
+
+    var z = y.split("").reverse().join("");
+
+    if (z[0] === ",") z = z.substr(1, z.length - 1);
+
+    if (z !== "0") {
+      if (type === "inc") z = "+ " + z;
+      else z = "- " + z;
+    }
+
+    return z;
   };
   return {
     //Оролтууд
@@ -72,7 +98,7 @@ var uiController = (function () {
       }
       var html = html.replace("%id%", item.id);
       var html = html.replace("%desc%", item.description);
-      var html = html.replace("$val$", item.value);
+      var html = html.replace("$val$", formatMoney(item.value, type));
       //DOM руу холболж дэлгэцэнд гаргана
 
       document.querySelector(list).insertAdjacentHTML("beforebegin", html);
@@ -80,12 +106,17 @@ var uiController = (function () {
 
     //Дэлгэцэнд төсөв хэвлэх
     addCalculatedIncome: function (allFinnance) {
-      document.querySelector(DOMstrings.leftIncome_).textContent =
-        allFinnance.leftIncome;
+      var type;
+      if (allFinnance.leftIncome > 0) type = "inc";
+      else type = "exp";
+      document.querySelector(DOMstrings.leftIncome_).textContent = formatMoney(
+        allFinnance.leftIncome,
+        type
+      );
       document.querySelector(DOMstrings.incomeCalculated).textContent =
-        allFinnance.totalsInc;
+        formatMoney(allFinnance.totalsInc, (x = "inc"));
       document.querySelector(DOMstrings.expensesCalculated).textContent =
-        allFinnance.totalsExp;
+        formatMoney(allFinnance.totalsExp, (x = "exp"));
       allFinnance.calPersentage !== 0
         ? (document.querySelector(
             DOMstrings.persentageCalculated_
