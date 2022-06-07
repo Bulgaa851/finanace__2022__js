@@ -39,10 +39,8 @@ var uiController = (function () {
 
     if (z[0] === ",") z = z.substr(1, z.length - 1);
 
-    if (z !== "0") {
-      if (type === "inc") z = "+ " + z;
-      else z = "- " + z;
-    }
+    if (type === "inc") z = "+ " + z;
+    else z = "- " + z;
 
     return z;
   };
@@ -124,6 +122,19 @@ var uiController = (function () {
         : (document.querySelector(
             DOMstrings.persentageCalculated_
           ).textContent = allFinnance.calPersentage);
+    },
+    changeType: function () {
+      var fields = document.querySelectorAll(
+        DOMstrings.inputType +
+          ", " +
+          DOMstrings.inputDescription +
+          ", " +
+          DOMstrings.inputValue
+      );
+      nodeListForEach(fields, function (el) {
+        el.classList.toggle("red-focus");
+      });
+      window.document.querySelector(DOMstrings.addBtn).classList.toggle("red");
     },
   };
 })();
@@ -281,6 +292,9 @@ var appController = (function (uiController, financeController) {
         ctrlAddItem();
       }
     });
+    document
+      .querySelector(DOM.inputType)
+      .addEventListener("change", uiController.changeType);
     document
       .querySelector(DOM.containerDiv)
       .addEventListener("click", function (event) {
